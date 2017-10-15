@@ -41,6 +41,9 @@ namespace GB_Memory
             TitleEntry ROMTitle = new TitleEntry();
             using (FileStream FileToAdd = new FileStream(ToAdd, FileMode.Open, FileAccess.Read))
             {
+                FileToAdd.Position = 0x143;
+                Byte tmp = (Byte)FileToAdd.ReadByte();
+                if (tmp == 0x80 || tmp == 0xC0) ROMToAdd.CGB = true;
                 FileToAdd.Position = 0x147;
                 ROMToAdd.CartridgeType = (byte)FileToAdd.ReadByte();
                 ROMToAdd.ROMSize = (byte)FileToAdd.ReadByte();
@@ -50,7 +53,6 @@ namespace GB_Memory
                 Byte[] buffer = new Byte[0xF];
                 FileToAdd.Read(buffer, 0, 0xF);
                 ROMToAdd.ASCIITitle = System.Text.ASCIIEncoding.ASCII.GetString(buffer);
-                if (Path.GetExtension(ToAdd).ToLower() == ".gbc") ROMToAdd.CGB = true;
             }
 
             if (ROMToAdd.ROMSizeKByte < 128)
@@ -468,6 +470,9 @@ namespace GB_Memory
             ROM ROMToAdd = new ROM();
             using (FileStream FileToAdd = new FileStream(ToAdd, FileMode.Open, FileAccess.Read))
             {
+                FileToAdd.Position = 0x143;
+                Byte tmp = (Byte)FileToAdd.ReadByte();
+                if (tmp == 0x80 || tmp == 0xC0) ROMToAdd.CGB = true;
                 FileToAdd.Position = 0x147;
                 ROMToAdd.CartridgeType = (byte)FileToAdd.ReadByte();
                 ROMToAdd.ROMSize = (byte)FileToAdd.ReadByte();
@@ -477,7 +482,6 @@ namespace GB_Memory
                 Byte[] buffer = new Byte[0xF];
                 FileToAdd.Read(buffer, 0, 0xF);
                 ROMToAdd.ASCIITitle = System.Text.ASCIIEncoding.ASCII.GetString(buffer);
-                if (Path.GetExtension(ToAdd).ToLower() == ".gbc") ROMToAdd.CGB = true;
             }
 
             Byte[] MAPBytes = new Byte[0x80];
