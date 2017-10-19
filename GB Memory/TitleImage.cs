@@ -16,18 +16,24 @@ namespace GB_Memory
     {
         public static Bitmap CreateTitleBitmap(string Input)
         {
-            Bitmap Font = (Bitmap)Bitmap.FromFile(Application.StartupPath + @"\font.bmp");
             Bitmap Output = new Bitmap(96, 8);
             using (Graphics g = Graphics.FromImage(Output))
             {
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
                 g.Clear(Color.Black);
+                if (!File.Exists(Application.StartupPath + @"\font.bmp"))
+                {
+                    MessageBox.Show("Font file is missing!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return Output;
+                }
                 int pos = 0;
+                Bitmap Font = (Bitmap)Bitmap.FromFile(Application.StartupPath + @"\font.bmp");
                 foreach (Char C in Input)
                 {
                     g.DrawImage(Font.Clone(Letter(C), PixelFormat.Format8bppIndexed), pos, 0, Letter(C).Width, Letter(C).Height);
                     pos += Letter(C).Width;
                 }
+                Font.Dispose();
             }
             return Output.Clone(new Rectangle(0, 0, Output.Width, Output.Height), PixelFormat.Format8bppIndexed);
         }

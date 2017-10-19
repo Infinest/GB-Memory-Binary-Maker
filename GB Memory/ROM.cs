@@ -10,7 +10,8 @@ namespace GB_Memory
     {
         public String Title,ASCIITitle,File;
         public Byte CartridgeType, ROMSize, RAMSize;
-        public bool padded,CGB = false;
+        public bool padded,CGB,embedded = false;
+
         public int ROMSizeKByte
         {
             get

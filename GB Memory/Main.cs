@@ -25,7 +25,25 @@ namespace GB_Memory
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private ROM ParseROM(MemoryStream Data)
+        {
+            ROM Output = new ROM();
+            Data.Position = 0x143;
+            Byte tmp = (Byte)Data.ReadByte();
+            if (tmp == 0x80 || tmp == 0xC0) Output.CGB = true;
+            Data.Position = 0x147;
+            Output.CartridgeType = (byte)Data.ReadByte();
+            Output.ROMSize = (byte)Data.ReadByte();
+            Output.RAMSize = (byte)Data.ReadByte();
+            Data.Position = 0x134;
+            Byte[] buffer = new Byte[0xF];
+            Data.Read(buffer, 0, 0xF);
+            Output.ASCIITitle = System.Text.ASCIIEncoding.ASCII.GetString(buffer);
+            Data.Dispose();
+            return Output;
+        }
+
+        private void AddButtonClick(object sender, EventArgs e)
         {
             String ToAdd = "";
             using (OpenFileDialog AddRom = new OpenFileDialog())
@@ -37,22 +55,16 @@ namespace GB_Memory
                 }
             }
             if (ToAdd == "") return;
-            ROM ROMToAdd = new ROM();
+            ROM ROMToAdd;
             TitleEntry ROMTitle = new TitleEntry();
             using (FileStream FileToAdd = new FileStream(ToAdd, FileMode.Open, FileAccess.Read))
             {
-                FileToAdd.Position = 0x143;
-                Byte tmp = (Byte)FileToAdd.ReadByte();
-                if (tmp == 0x80 || tmp == 0xC0) ROMToAdd.CGB = true;
-                FileToAdd.Position = 0x147;
-                ROMToAdd.CartridgeType = (byte)FileToAdd.ReadByte();
-                ROMToAdd.ROMSize = (byte)FileToAdd.ReadByte();
-                ROMToAdd.RAMSize = (byte)FileToAdd.ReadByte();
+                using (MemoryStream Mem = new MemoryStream())
+                {
+                    FileToAdd.CopyTo(Mem);
+                    ROMToAdd = ParseROM(Mem);
+                }
                 ROMToAdd.File = ToAdd;
-                FileToAdd.Position = 0x134;
-                Byte[] buffer = new Byte[0xF];
-                FileToAdd.Read(buffer, 0, 0xF);
-                ROMToAdd.ASCIITitle = System.Text.ASCIIEncoding.ASCII.GetString(buffer);
             }
 
             if (ROMToAdd.ROMSizeKByte < 128)
@@ -74,9 +86,9 @@ namespace GB_Memory
             else return;
 
             Panel ROMPanel = new Panel();
-            ROMPanel.Width = panel1.Width - 22;
+            ROMPanel.Width = ROMListPanel.Width - 22;
             ROMPanel.Height = 90;
-            ROMPanel.Location = new Point(1, 1 + panel1.Controls.Count * 91);
+            ROMPanel.Location = new Point(1, 1 + ROMListPanel.Controls.Count * 91);
             ROMPanel.BorderStyle = BorderStyle.FixedSingle;
 
             Label T = new Label();
@@ -139,7 +151,7 @@ namespace GB_Memory
                         break;
                     }
                 }
-                panel1.Controls.Remove(((Button)s).Parent);
+                ROMListPanel.Controls.Remove(((Button)s).Parent);
                 updateROMSpace();
             };
             ROMPanel.Controls.Add(Remove);
@@ -165,7 +177,7 @@ namespace GB_Memory
             };
             ROMPanel.Controls.Add(Edit);
 
-            panel1.Controls.Add(ROMPanel);
+            ROMListPanel.Controls.Add(ROMPanel);
             ROMList.Add(ROMToAdd);
             updateROMSpace();
         }
@@ -206,7 +218,7 @@ namespace GB_Memory
                 return false;
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void CreateBinariesButtonClick(object sender, EventArgs e)
         {
             if (ROMList.Count < 1) return;
             Byte[] MenuBuffer;
@@ -449,7 +461,7 @@ namespace GB_Memory
             //File.WriteAllBytes(Application.StartupPath + @"\output.map", MAPBytes);
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void MAPButtonClick(object sender, EventArgs e)
         {
             String ToAdd = "";
             using (OpenFileDialog AddRom = new OpenFileDialog())
@@ -593,7 +605,7 @@ namespace GB_Memory
                 Mem.Write(temp, 0, temp.Length);
 
                 //Title SHIFT-JIS
-                temp = new Byte[] { 0x82, 0x4F,0x82,0x57,0x82,0x60,0x83,0x58,0x81,0x5B,0x83,0x70,0x81,0x5B,0x83,0x7D,0x83,0x8A,0x83,0x49,0x83,0x75,0x83,0x89,0x83,0x55,0x81,0x5B,0x83,0x59,0x83,0x66,0x83,0x89,0x83,0x62,0x83,0x4E,0x83,0x58,0x20,0x20,0x20,0x20};
+                temp = new Byte[] { 0x82, 0x4F, 0x82, 0x57, 0x82, 0x60, 0x83, 0x58, 0x81, 0x5B, 0x83, 0x70, 0x81, 0x5B, 0x83, 0x7D, 0x83, 0x8A, 0x83, 0x49, 0x83, 0x75, 0x83, 0x89, 0x83, 0x55, 0x81, 0x5B, 0x83, 0x59, 0x83, 0x66, 0x83, 0x89, 0x83, 0x62, 0x83, 0x4E, 0x83, 0x58, 0x20, 0x20, 0x20, 0x20 };
                 Mem.Write(temp, 0, temp.Length);
 
                 //Date ASCII "MM/DD/YYYY" + Time ASCII"HH:MM:SS"
@@ -613,6 +625,73 @@ namespace GB_Memory
             String FileToCreate = Path.GetDirectoryName(ROMToAdd.File) + @"\" + Path.GetFileNameWithoutExtension(ROMToAdd.File) + ".map";
             File.WriteAllBytes(FileToCreate, MAPBytes);
             MessageBox.Show("Created:" + Environment.NewLine + FileToCreate);
+        }
+
+        private void ImportButtonClick(object sender, EventArgs e)
+        {
+            String ToImport = "";
+            using (OpenFileDialog ImportMenu = new OpenFileDialog())
+            {
+                ImportMenu.Filter = "1024kB Menu|*.gb;*.gbc;*.bin";
+                if (ImportMenu.ShowDialog() == DialogResult.OK && File.Exists(ImportMenu.FileName))
+                {
+                    ToImport = ImportMenu.FileName;
+                    if (new FileInfo(ToImport).Length / 1024 != 1024)
+                    {
+                        MessageBox.Show("Menu ROM has to be 1024kByte in size!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+            }
+            if (ToImport == "") return;
+
+            List<ROM> ROMsToAdd;
+            using (FileStream Reader = new FileStream(ToImport, FileMode.Open, FileAccess.Read))
+            {
+                Reader.Position = 0x134;
+                Byte[] temp = new Byte[15], temp1 = new Byte[0x10];
+
+                //ROM ASCII title
+                Reader.Read(temp, 0, 15);
+
+                //Info entry header for Menu
+                Reader.Position = 0x1C000;
+                Reader.Read(temp1, 0, 0x10);
+
+                if (Encoding.ASCII.GetString(temp) != "NP M-MENU  MENU" || !temp1.SequenceEqual( new Byte[] {0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x44,0x4D,0x47,0x20,0x2D,0x4D,0x45,0x4E,0x55 }))
+                {
+                    MessageBox.Show("File is not a valid Menu ROM", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                Reader.Position = 0x1C200;
+                Byte NextGameIndex = (Byte)Reader.ReadByte();
+                ROMsToAdd = new List<ROM>();
+                ROM Temp = new ROM();
+                //Read info for each game written to the menu binary into ROM class and add all to the ROMsToAdd list until end is reached
+                while (NextGameIndex != 0 && NextGameIndex != 0xFF)
+                {
+                    int Base = (Reader.ReadByte()-1)*128;
+
+                    Reader.Position = 0x20000 + (Base*1024) + 0x148;
+                    int Size = (32 << Reader.ReadByte());
+                    Reader.Position = 0x20000 + Base * 1024;
+                    temp = new Byte[Size * 1024];
+                    Reader.Read(temp, 0, Size * 1024);
+                    File.WriteAllBytes(Application.StartupPath + @"\" +Reader.Position.ToString("X") +".gbc",temp);
+                    using (MemoryStream Mem = new MemoryStream(temp))
+                    {
+                        Temp = ParseROM(Mem);
+                    }
+                    ROMsToAdd.Add(Temp);
+
+                    Reader.Position = 0x1C200 + 0x200 * ROMsToAdd.Count;
+                    NextGameIndex = (Byte)Reader.ReadByte();
+                    Temp = new ROM();
+                }
+
+
+            }
+            
         }
     }
 }

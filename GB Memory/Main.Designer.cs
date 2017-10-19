@@ -29,33 +29,34 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
-            this.button1 = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.AddButton = new System.Windows.Forms.Button();
+            this.ROMListPanel = new System.Windows.Forms.Panel();
             this.SpaceLabel = new System.Windows.Forms.Label();
-            this.button3 = new System.Windows.Forms.Button();
+            this.CreateBinariesButton = new System.Windows.Forms.Button();
             this.MenuSpace = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
+            this.MAPButton = new System.Windows.Forms.Button();
+            this.ImportButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // button1
+            // AddButton
             // 
-            this.button1.Location = new System.Drawing.Point(12, 12);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Add";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.AddButton.Location = new System.Drawing.Point(12, 12);
+            this.AddButton.Name = "AddButton";
+            this.AddButton.Size = new System.Drawing.Size(75, 23);
+            this.AddButton.TabIndex = 0;
+            this.AddButton.Text = "Add";
+            this.AddButton.UseVisualStyleBackColor = true;
+            this.AddButton.Click += new System.EventHandler(this.AddButtonClick);
             // 
-            // panel1
+            // ROMListPanel
             // 
-            this.panel1.AutoScroll = true;
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panel1.Location = new System.Drawing.Point(12, 41);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(423, 393);
-            this.panel1.TabIndex = 1;
-            this.panel1.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.panel1_ControlRemoved);
+            this.ROMListPanel.AutoScroll = true;
+            this.ROMListPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.ROMListPanel.Location = new System.Drawing.Point(12, 41);
+            this.ROMListPanel.Name = "ROMListPanel";
+            this.ROMListPanel.Size = new System.Drawing.Size(423, 393);
+            this.ROMListPanel.TabIndex = 1;
+            this.ROMListPanel.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.panel1_ControlRemoved);
             // 
             // SpaceLabel
             // 
@@ -66,15 +67,15 @@
             this.SpaceLabel.TabIndex = 3;
             this.SpaceLabel.Text = "Free Space: 896kByte";
             // 
-            // button3
+            // CreateBinariesButton
             // 
-            this.button3.Location = new System.Drawing.Point(93, 12);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(88, 23);
-            this.button3.TabIndex = 4;
-            this.button3.Text = "Create binaries";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.CreateBinariesButton.Location = new System.Drawing.Point(93, 12);
+            this.CreateBinariesButton.Name = "CreateBinariesButton";
+            this.CreateBinariesButton.Size = new System.Drawing.Size(88, 23);
+            this.CreateBinariesButton.TabIndex = 4;
+            this.CreateBinariesButton.Text = "Create binaries";
+            this.CreateBinariesButton.UseVisualStyleBackColor = true;
+            this.CreateBinariesButton.Click += new System.EventHandler(this.CreateBinariesButtonClick);
             // 
             // MenuSpace
             // 
@@ -85,27 +86,38 @@
             this.MenuSpace.TabIndex = 5;
             this.MenuSpace.Text = "128kByte reserved for menu -";
             // 
-            // button2
+            // MAPButton
             // 
-            this.button2.Location = new System.Drawing.Point(12, 440);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(423, 23);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "Create MAP data for standalone ROM (Up to 1024kByte)";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.MAPButton.Location = new System.Drawing.Point(12, 440);
+            this.MAPButton.Name = "MAPButton";
+            this.MAPButton.Size = new System.Drawing.Size(423, 23);
+            this.MAPButton.TabIndex = 6;
+            this.MAPButton.Text = "Create MAP data for standalone ROM (Up to 1024kByte)";
+            this.MAPButton.UseVisualStyleBackColor = true;
+            this.MAPButton.Click += new System.EventHandler(this.MAPButtonClick);
+            // 
+            // ImportButton
+            // 
+            this.ImportButton.Location = new System.Drawing.Point(12, 470);
+            this.ImportButton.Name = "ImportButton";
+            this.ImportButton.Size = new System.Drawing.Size(423, 23);
+            this.ImportButton.TabIndex = 7;
+            this.ImportButton.Text = "Import 1024kByte Menu ROM";
+            this.ImportButton.UseVisualStyleBackColor = true;
+            this.ImportButton.Click += new System.EventHandler(this.ImportButtonClick);
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(447, 467);
-            this.Controls.Add(this.button2);
+            this.ClientSize = new System.Drawing.Size(447, 512);
+            this.Controls.Add(this.ImportButton);
+            this.Controls.Add(this.MAPButton);
             this.Controls.Add(this.MenuSpace);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.CreateBinariesButton);
             this.Controls.Add(this.SpaceLabel);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.AddButton);
+            this.Controls.Add(this.ROMListPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -119,12 +131,13 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button AddButton;
+        private System.Windows.Forms.Panel ROMListPanel;
         private System.Windows.Forms.Label SpaceLabel;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button CreateBinariesButton;
         private System.Windows.Forms.Label MenuSpace;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button MAPButton;
+        private System.Windows.Forms.Button ImportButton;
     }
 }
 
