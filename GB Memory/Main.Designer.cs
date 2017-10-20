@@ -102,7 +102,7 @@
             this.ImportButton.Name = "ImportButton";
             this.ImportButton.Size = new System.Drawing.Size(423, 23);
             this.ImportButton.TabIndex = 7;
-            this.ImportButton.Text = "Import 1024kByte Menu ROM";
+            this.ImportButton.Text = "Import ROMs from 1024kByte GBM binary";
             this.ImportButton.UseVisualStyleBackColor = true;
             this.ImportButton.Click += new System.EventHandler(this.ImportButtonClick);
             // 
@@ -110,7 +110,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(447, 512);
+            this.ClientSize = new System.Drawing.Size(447, 497);
             this.Controls.Add(this.ImportButton);
             this.Controls.Add(this.MAPButton);
             this.Controls.Add(this.MenuSpace);
@@ -123,7 +123,7 @@
             this.MaximizeBox = false;
             this.Name = "Main";
             this.Text = "GB Memory Binary Maker";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Load += new System.EventHandler(this.Main_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

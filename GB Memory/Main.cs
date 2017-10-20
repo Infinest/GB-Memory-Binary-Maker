@@ -39,63 +39,31 @@ namespace GB_Memory
             Byte[] buffer = new Byte[0xF];
             Data.Read(buffer, 0, 0xF);
             Output.ASCIITitle = System.Text.ASCIIEncoding.ASCII.GetString(buffer);
+            if (Output.ROMSizeKByte < 128)
+            {
+                Output.padded = true;
+            }
             Data.Dispose();
             return Output;
         }
 
-        private void AddButtonClick(object sender, EventArgs e)
+        private void AddROMToInterface(ROM ROMToAdd)
         {
-            String ToAdd = "";
-            using (OpenFileDialog AddRom = new OpenFileDialog())
-            {
-                AddRom.Filter = "All GB/C ROMs|*.gb;*.gbc";
-                if (AddRom.ShowDialog() == DialogResult.OK && File.Exists(AddRom.FileName))
-                {
-                    ToAdd = AddRom.FileName;
-                }
-            }
-            if (ToAdd == "") return;
-            ROM ROMToAdd;
-            TitleEntry ROMTitle = new TitleEntry();
-            using (FileStream FileToAdd = new FileStream(ToAdd, FileMode.Open, FileAccess.Read))
-            {
-                using (MemoryStream Mem = new MemoryStream())
-                {
-                    FileToAdd.CopyTo(Mem);
-                    ROMToAdd = ParseROM(Mem);
-                }
-                ROMToAdd.File = ToAdd;
-            }
 
-            if (ROMToAdd.ROMSizeKByte < 128)
-            {
-                ROMToAdd.padded = true;
-                ROMToAdd.ROMSize = 0x2;
-            }
-
-            if (ROMToAdd.ROMSizeKByte > FreeROMSpace)
-            {
-                MessageBox.Show("ROM size exceeds the free space left.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (ROMTitle.ShowDialog() == DialogResult.OK)
-            {
-                ROMToAdd.Title = ROMTitle.Title;
-            }
-            else return;
-
+            //Create new sub-panel for ROM
             Panel ROMPanel = new Panel();
             ROMPanel.Width = ROMListPanel.Width - 22;
             ROMPanel.Height = 90;
             ROMPanel.Location = new Point(1, 1 + ROMListPanel.Controls.Count * 91);
             ROMPanel.BorderStyle = BorderStyle.FixedSingle;
 
+            //Invisible that contains the entered title in String format for later
             Label T = new Label();
             T.Visible = false;
             T.Text = ROMToAdd.Title;
             ROMPanel.Controls.Add(T);
 
+            //Invisible that contains just the ASCII-title in String format for later
             Label AT = new Label();
             AT.Visible = false;
             AT.Text = ROMToAdd.ASCIITitle;
@@ -128,7 +96,7 @@ namespace GB_Memory
 
             Label ROMSizeDisplay = new Label();
             ROMSizeDisplay.AutoSize = true;
-            ROMSizeDisplay.Text = "ROMSize: " + ROMToAdd.ROMSizeKByte + "kByte" + (ROMToAdd.padded ? " (padded)" : "");
+            ROMSizeDisplay.Text = "ROMSize: " + ROMToAdd.ROMSizeKByte + "kByte" + (ROMToAdd.padded ? " (padded to 128kByte)" : "");
             ROMSizeDisplay.Location = new Point(5, 53);
             ROMPanel.Controls.Add(ROMSizeDisplay);
 
@@ -138,23 +106,26 @@ namespace GB_Memory
             RAMSizeDisplay.Location = new Point(5, 70);
             ROMPanel.Controls.Add(RAMSizeDisplay);
 
-            Button Remove = new Button();
-            Remove.Text = "Remove";
-            Remove.Location = new Point(300, 60);
-            Remove.Click += (s, ev) =>
+            if (ROMToAdd.embedded)
             {
-                foreach (ROM R in ROMList)
+                Button Remove = new Button();
+                Remove.Text = "Remove";
+                Remove.Location = new Point(300, 60);
+                Remove.Click += (s, ev) =>
                 {
-                    if (R.Title == ((Button)s).Parent.Controls[0].Text && R.ASCIITitle == ((Button)s).Parent.Controls[1].Text)
+                    foreach (ROM R in ROMList)
                     {
-                        ROMList.Remove(R);
-                        break;
+                        if (R.Title == ((Button)s).Parent.Controls[0].Text && R.ASCIITitle == ((Button)s).Parent.Controls[1].Text)
+                        {
+                            ROMList.Remove(R);
+                            break;
+                        }
                     }
-                }
-                ROMListPanel.Controls.Remove(((Button)s).Parent);
-                updateROMSpace();
-            };
-            ROMPanel.Controls.Add(Remove);
+                    ROMListPanel.Controls.Remove(((Button)s).Parent);
+                    updateROMSpace();
+                };
+                ROMPanel.Controls.Add(Remove);
+            }
 
             Button Edit = new Button();
             Edit.Text = "Edit Title";
@@ -177,9 +148,77 @@ namespace GB_Memory
             };
             ROMPanel.Controls.Add(Edit);
 
+            PictureBox Rip = new PictureBox();
+            Rip.Location = new Point(382, 1);
+            Rip.SizeMode = PictureBoxSizeMode.AutoSize;
+            Rip.Cursor = Cursors.Hand;
+            Rip.Image = GB_Memory.Properties.Resources.icon_save;
+            Rip.Click += (s, ev) =>
+            {
+                if (MessageBox.Show("Rip ROM from binary?", "Rip ROM", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    foreach (ROM R in ROMList)
+                    {
+                        if (R.Title == ((PictureBox)s).Parent.Controls[0].Text && R.ASCIITitle == ((PictureBox)s).Parent.Controls[1].Text && R.embedded)
+                        {
+                            if (File.Exists(R.File))
+                            {
+                                Byte[] buffer = new Byte[R.ROMSizeKByte * 1024];
+                                using (FileStream Reader = new FileStream(R.File, FileMode.Open, FileAccess.Read))
+                                {
+                                    Reader.Position = R.ROMPos;
+                                    Reader.Read(buffer, 0, R.ROMSizeKByte * 1024);
+                                }
+                                using (SaveFileDialog ToSave = new SaveFileDialog())
+                                {
+                                    ToSave.FileName = R.ASCIITitle;
+                                    ToSave.Filter = R.CGB ? "GBC ROM|*.gbc" : "GB ROM|*.gb";
+                                    if (ToSave.ShowDialog() != DialogResult.OK) return;
+                                    if (!Directory.Exists(Path.GetDirectoryName(ToSave.FileName))) return;
+                                    if (!CheckFolderPermissions(Path.GetDirectoryName(ToSave.FileName))) return;
+                                    File.WriteAllBytes(ToSave.FileName, buffer);
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            ROMPanel.Controls.Add(Rip);
+
             ROMListPanel.Controls.Add(ROMPanel);
             ROMList.Add(ROMToAdd);
             updateROMSpace();
+        }
+
+        private void AddButtonClick(object sender, EventArgs e)
+        {
+            String ToAdd = "";
+            using (OpenFileDialog AddRom = new OpenFileDialog())
+            {
+                AddRom.Filter = "All GB/C ROMs|*.gb;*.gbc";
+                if (AddRom.ShowDialog() == DialogResult.OK && File.Exists(AddRom.FileName))
+                {
+                    ToAdd = AddRom.FileName;
+                }
+            }
+            if (ToAdd == "") return;
+            ROM ROMToAdd;
+            using (FileStream FileToAdd = new FileStream(ToAdd, FileMode.Open, FileAccess.Read))
+            {
+                using (MemoryStream Mem = new MemoryStream())
+                {
+                    FileToAdd.CopyTo(Mem);
+                    ROMToAdd = ParseROM(Mem);
+                }
+                ROMToAdd.File = ToAdd;
+            }
+            TitleEntry ROMTitle = new TitleEntry();
+            if (ROMTitle.ShowDialog() == DialogResult.OK)
+            {
+                ROMToAdd.Title = ROMTitle.Title;
+            }
+            else return;
+            AddROMToInterface(ROMToAdd);
         }
 
         private void updateROMSpace()
@@ -187,21 +226,23 @@ namespace GB_Memory
             int TakenSpace = 0;
             foreach (ROM R in ROMList)
             {
-                TakenSpace += R.ROMSizeKByte;
+                TakenSpace += (!R.padded) ? R.ROMSizeKByte : 128;
             }
             FreeROMSpace = ROMSpace - TakenSpace;
             SpaceLabel.Text = String.Format("Free Space: {0}kByte", FreeROMSpace);
+            if (0 <= FreeROMSpace) { SpaceLabel.ForeColor = Color.FromArgb(255, 0, 0, 0); }
+            else { SpaceLabel.ForeColor = Color.FromArgb(255, 255, 0, 0); }
         }
 
         private void panel1_ControlRemoved(Object sender, ControlEventArgs e)
         {
             for (int i = 0; i < ((Panel)sender).Controls.Count; i++)
             {
-                ((Panel)sender).Controls[i].Location = new Point(0, i * 91);
+                ((Panel)sender).Controls[i].Location = new Point(0, i * 91 + (((Panel)sender).AutoScrollPosition.Y + 1));
             }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void Main_Load(object sender, EventArgs e)
         {
             updateROMSpace();
         }
@@ -221,6 +262,13 @@ namespace GB_Memory
         private void CreateBinariesButtonClick(object sender, EventArgs e)
         {
             if (ROMList.Count < 1) return;
+
+            if (FreeROMSpace < 0)
+            {
+                MessageBox.Show("Your ROMs exceed the 896kByte of free space!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             Byte[] MenuBuffer;
             if (File.Exists(Application.StartupPath + @"\Menu.gbc"))
             {
@@ -240,7 +288,6 @@ namespace GB_Memory
             String SavePath;
             using (SaveFileDialog ToSave = new SaveFileDialog())
             {
-                //ToSave.Filter = "Binaries";
                 if (ToSave.ShowDialog() != DialogResult.OK) return;
                 if (!Directory.Exists(Path.GetDirectoryName(ToSave.FileName))) return;
                 if (!CheckFolderPermissions(Path.GetDirectoryName(ToSave.FileName))) return;
@@ -263,7 +310,7 @@ namespace GB_Memory
                     }
                     Mem.WriteByte((Byte)(Base / 128));
 
-                    //Maybe SRAM base??? MUSS ÄNDERN!!!!!!!!!!
+                    //Maybe SRAM base???
                     Mem.WriteByte(0x0);
 
                     //ROM size in 128Kbyte units (0001h..0007h = 128K..896K)
@@ -331,9 +378,22 @@ namespace GB_Memory
                 for (int i = 0; i < ROMList.Count; i++)
                 {
                     pos = Mem.Position;
-                    Byte[] temp = File.ReadAllBytes(ROMList[i].File);
-                    Mem.Write(temp, 0, temp.Length);
-                    Mem.Position = pos + ROMList[i].ROMSizeKByte * 1024;
+                    Byte[] temp = new Byte[0];
+                    if (!ROMList[i].embedded)
+                    {
+                        temp = File.ReadAllBytes(ROMList[i].File);
+                    }
+                    else
+                    {
+                        using (FileStream Reader = new FileStream(ROMList[i].File, FileMode.Open, FileAccess.Read))
+                        {
+                            Reader.Position = ROMList[i].ROMPos;
+                            temp = new Byte[ROMList[i].ROMSizeKByte * 1024];
+                            Reader.Read(temp, 0, ROMList[i].ROMSizeKByte * 1024);
+                        }
+                    }
+                    Mem.Write(temp, 0, ROMList[i].ROMSizeKByte * 1024);
+                    Mem.Position = pos + ((ROMList[i].ROMSizeKByte >= 128) ? ROMList[i].ROMSizeKByte : 128) * 1024;
                 }
             }
 
@@ -355,7 +415,7 @@ namespace GB_Memory
                     //MBC Type
                     if (ROMList[i].CartridgeType >= 0x1 && ROMList[i].CartridgeType <= 0x3)
                     {
-                        //MBC2
+                        //MBC1
                         Bits[15] = false; Bits[14] = false; Bits[13] = true;
                     }
                     else if (ROMList[i].CartridgeType >= 0x5 && ROMList[i].CartridgeType <= 0x6)
@@ -430,7 +490,7 @@ namespace GB_Memory
                     temp = new Byte[2];
                     Bits.CopyTo(temp, 0);
                     Array.Reverse(temp);
-                    // Or together ROM Startoffset together with last bit of SRAM Size
+                    // Or ROM Startoffset together with last bit of SRAM Size
                     temp[1] = (byte)(StartOffsetByte | temp[1]);
                     Mem.Write(temp, 0, temp.Length);
 
@@ -505,7 +565,7 @@ namespace GB_Memory
                 //MBC Type
                 if (ROMToAdd.CartridgeType >= 0x1 && ROMToAdd.CartridgeType <= 0x3)
                 {
-                    //MBC2
+                    //MBC1
                     Bits[15] = false; Bits[14] = false; Bits[13] = true;
                 }
                 else if (ROMToAdd.CartridgeType >= 0x5 && ROMToAdd.CartridgeType <= 0x6)
@@ -576,7 +636,7 @@ namespace GB_Memory
                 Byte[] temp = new Byte[2];
                 Bits.CopyTo(temp, 0);
                 Array.Reverse(temp);
-                // Or together ROM Startoffset (in this case always 0x0) together with last bit of SRAM Size
+                // Or ROM Startoffset (in this case always 0x0) together with last bit of SRAM Size
                 temp[1] = (byte)(0x0 | temp[1]);
                 Mem.Write(temp, 0, temp.Length);
 
@@ -632,13 +692,13 @@ namespace GB_Memory
             String ToImport = "";
             using (OpenFileDialog ImportMenu = new OpenFileDialog())
             {
-                ImportMenu.Filter = "1024kB Menu|*.gb;*.gbc;*.bin";
+                ImportMenu.Filter = "1024kB GBM binary|*.gb;*.gbc;*.bin";
                 if (ImportMenu.ShowDialog() == DialogResult.OK && File.Exists(ImportMenu.FileName))
                 {
                     ToImport = ImportMenu.FileName;
                     if (new FileInfo(ToImport).Length / 1024 != 1024)
                     {
-                        MessageBox.Show("Menu ROM has to be 1024kByte in size!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("GBM binary has to be 1024kByte in size!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
                 }
@@ -658,29 +718,39 @@ namespace GB_Memory
                 Reader.Position = 0x1C000;
                 Reader.Read(temp1, 0, 0x10);
 
-                if (Encoding.ASCII.GetString(temp) != "NP M-MENU  MENU" || !temp1.SequenceEqual( new Byte[] {0x0,0x0,0x0,0x1,0x0,0x0,0x0,0x44,0x4D,0x47,0x20,0x2D,0x4D,0x45,0x4E,0x55 }))
+                if (Encoding.ASCII.GetString(temp) != "NP M-MENU  MENU" || !temp1.SequenceEqual(new Byte[] { 0x0, 0x0, 0x0, 0x1, 0x0, 0x0, 0x0, 0x44, 0x4D, 0x47, 0x20, 0x2D, 0x4D, 0x45, 0x4E, 0x55 }))
                 {
-                    MessageBox.Show("File is not a valid Menu ROM", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("File is not a valid GBM binary", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
                 Reader.Position = 0x1C200;
                 Byte NextGameIndex = (Byte)Reader.ReadByte();
                 ROMsToAdd = new List<ROM>();
                 ROM Temp = new ROM();
+                TitleEntry ROMTitle;
+
                 //Read info for each game written to the menu binary into ROM class and add all to the ROMsToAdd list until end is reached
                 while (NextGameIndex != 0 && NextGameIndex != 0xFF)
                 {
-                    int Base = (Reader.ReadByte()-1)*128;
+                    int Base = (Reader.ReadByte() - 1) * 128;
 
-                    Reader.Position = 0x20000 + (Base*1024) + 0x148;
+                    Reader.Position = 0x20000 + (Base * 1024) + 0x148;
                     int Size = (32 << Reader.ReadByte());
                     Reader.Position = 0x20000 + Base * 1024;
                     temp = new Byte[Size * 1024];
                     Reader.Read(temp, 0, Size * 1024);
-                    File.WriteAllBytes(Application.StartupPath + @"\" +Reader.Position.ToString("X") +".gbc",temp);
                     using (MemoryStream Mem = new MemoryStream(temp))
                     {
                         Temp = ParseROM(Mem);
+                    }
+                    Temp.ROMPos = (uint)(0x20000 + Base * 1024);
+                    Temp.embedded = true;
+                    Temp.File = ToImport;
+
+                    ROMTitle = new TitleEntry(Temp.ASCIITitle);
+                    if (ROMTitle.ShowDialog() == DialogResult.OK)
+                    {
+                        Temp.Title = ROMTitle.Title;
                     }
                     ROMsToAdd.Add(Temp);
 
@@ -688,10 +758,16 @@ namespace GB_Memory
                     NextGameIndex = (Byte)Reader.ReadByte();
                     Temp = new ROM();
                 }
-
-
             }
-            
+
+            foreach (ROM R in ROMsToAdd)
+            {
+                if (R.Title != "")
+                {
+                    AddROMToInterface(R);
+                }
+            }
+
         }
     }
 }
