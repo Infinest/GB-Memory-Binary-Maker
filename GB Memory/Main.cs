@@ -106,26 +106,23 @@ namespace GB_Memory
             RAMSizeDisplay.Location = new Point(5, 70);
             ROMPanel.Controls.Add(RAMSizeDisplay);
 
-            if (ROMToAdd.embedded)
+            Button Remove = new Button();
+            Remove.Text = "Remove";
+            Remove.Location = new Point(300, 60);
+            Remove.Click += (s, ev) =>
             {
-                Button Remove = new Button();
-                Remove.Text = "Remove";
-                Remove.Location = new Point(300, 60);
-                Remove.Click += (s, ev) =>
+                foreach (ROM R in ROMList)
                 {
-                    foreach (ROM R in ROMList)
+                    if (R.Title == ((Button)s).Parent.Controls[0].Text && R.ASCIITitle == ((Button)s).Parent.Controls[1].Text)
                     {
-                        if (R.Title == ((Button)s).Parent.Controls[0].Text && R.ASCIITitle == ((Button)s).Parent.Controls[1].Text)
-                        {
-                            ROMList.Remove(R);
-                            break;
-                        }
+                        ROMList.Remove(R);
+                        break;
                     }
-                    ROMListPanel.Controls.Remove(((Button)s).Parent);
-                    updateROMSpace();
-                };
-                ROMPanel.Controls.Add(Remove);
-            }
+                }
+                ROMListPanel.Controls.Remove(((Button)s).Parent);
+                updateROMSpace();
+            };
+            ROMPanel.Controls.Add(Remove);
 
             Button Edit = new Button();
             Edit.Text = "Edit Title";
@@ -148,42 +145,45 @@ namespace GB_Memory
             };
             ROMPanel.Controls.Add(Edit);
 
-            PictureBox Rip = new PictureBox();
-            Rip.Location = new Point(382, 1);
-            Rip.SizeMode = PictureBoxSizeMode.AutoSize;
-            Rip.Cursor = Cursors.Hand;
-            Rip.Image = GB_Memory.Properties.Resources.icon_save;
-            Rip.Click += (s, ev) =>
+            if (ROMToAdd.embedded)
             {
-                if (MessageBox.Show("Rip ROM from binary?", "Rip ROM", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                PictureBox Rip = new PictureBox();
+                Rip.Location = new Point(382, 1);
+                Rip.SizeMode = PictureBoxSizeMode.AutoSize;
+                Rip.Cursor = Cursors.Hand;
+                Rip.Image = GB_Memory.Properties.Resources.icon_save;
+                Rip.Click += (s, ev) =>
                 {
-                    foreach (ROM R in ROMList)
+                    if (MessageBox.Show("Rip ROM from binary?", "Rip ROM", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
-                        if (R.Title == ((PictureBox)s).Parent.Controls[0].Text && R.ASCIITitle == ((PictureBox)s).Parent.Controls[1].Text && R.embedded)
+                        foreach (ROM R in ROMList)
                         {
-                            if (File.Exists(R.File))
+                            if (R.Title == ((PictureBox)s).Parent.Controls[0].Text && R.ASCIITitle == ((PictureBox)s).Parent.Controls[1].Text && R.embedded)
                             {
-                                Byte[] buffer = new Byte[R.ROMSizeKByte * 1024];
-                                using (FileStream Reader = new FileStream(R.File, FileMode.Open, FileAccess.Read))
+                                if (File.Exists(R.File))
                                 {
-                                    Reader.Position = R.ROMPos;
-                                    Reader.Read(buffer, 0, R.ROMSizeKByte * 1024);
-                                }
-                                using (SaveFileDialog ToSave = new SaveFileDialog())
-                                {
-                                    ToSave.FileName = R.ASCIITitle;
-                                    ToSave.Filter = R.CGB ? "GBC ROM|*.gbc" : "GB ROM|*.gb";
-                                    if (ToSave.ShowDialog() != DialogResult.OK) return;
-                                    if (!Directory.Exists(Path.GetDirectoryName(ToSave.FileName))) return;
-                                    if (!CheckFolderPermissions(Path.GetDirectoryName(ToSave.FileName))) return;
-                                    File.WriteAllBytes(ToSave.FileName, buffer);
+                                    Byte[] buffer = new Byte[R.ROMSizeKByte * 1024];
+                                    using (FileStream Reader = new FileStream(R.File, FileMode.Open, FileAccess.Read))
+                                    {
+                                        Reader.Position = R.ROMPos;
+                                        Reader.Read(buffer, 0, R.ROMSizeKByte * 1024);
+                                    }
+                                    using (SaveFileDialog ToSave = new SaveFileDialog())
+                                    {
+                                        ToSave.FileName = R.ASCIITitle;
+                                        ToSave.Filter = R.CGB ? "GBC ROM|*.gbc" : "GB ROM|*.gb";
+                                        if (ToSave.ShowDialog() != DialogResult.OK) return;
+                                        if (!Directory.Exists(Path.GetDirectoryName(ToSave.FileName))) return;
+                                        if (!CheckFolderPermissions(Path.GetDirectoryName(ToSave.FileName))) return;
+                                        File.WriteAllBytes(ToSave.FileName, buffer);
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            };
-            ROMPanel.Controls.Add(Rip);
+                };
+                ROMPanel.Controls.Add(Rip);
+            }
 
             ROMListPanel.Controls.Add(ROMPanel);
             ROMList.Add(ROMToAdd);
@@ -212,7 +212,7 @@ namespace GB_Memory
                 }
                 ROMToAdd.File = ToAdd;
             }
-            TitleEntry ROMTitle = new TitleEntry();
+            TitleEntry ROMTitle = new TitleEntry(ROMToAdd.ASCIITitle);
             if (ROMTitle.ShowDialog() == DialogResult.OK)
             {
                 ROMToAdd.Title = ROMTitle.Title;
