@@ -306,7 +306,7 @@ namespace GB_Memory
                     int Base = 128;
                     for (int b = i - 1; b >= 0; b--)
                     {
-                        Base += ROMList[b].ROMSizeKByte;
+                        Base += ((ROMList[b].ROMSizeKByte < 128) ? 128 : ROMList[b].ROMSizeKByte);
                     }
                     Mem.WriteByte((Byte)(Base / 128));
 
@@ -314,7 +314,7 @@ namespace GB_Memory
                     Mem.WriteByte(0x0);
 
                     //ROM size in 128Kbyte units (0001h..0007h = 128K..896K)
-                    Mem.WriteByte((Byte)(ROMList[i].ROMSizeKByte / 128));
+                    Mem.WriteByte((Byte)(((ROMList[i].ROMSizeKByte < 128) ? 128 : ROMList[i].ROMSizeKByte) / 128));
                     Mem.WriteByte(0x0);
 
                     //SRAM size in 32-byte units (0000h,00xxh,01xxh,xxxxh=0,MBC2,8K,32K)
@@ -393,7 +393,7 @@ namespace GB_Memory
                         }
                     }
                     Mem.Write(temp, 0, ROMList[i].ROMSizeKByte * 1024);
-                    Mem.Position = pos + ((ROMList[i].ROMSizeKByte >= 128) ? ROMList[i].ROMSizeKByte : 128) * 1024;
+                    Mem.Position = pos + ((ROMList[i].ROMSizeKByte < 128) ? 128 : ROMList[i].ROMSizeKByte) * 1024;
                 }
             }
 
@@ -442,6 +442,9 @@ namespace GB_Memory
                     //ROM Size
                     switch (ROMList[i].ROMSizeKByte)
                     {
+                        case (64):
+                            Bits[12] = false; Bits[11] = true; Bits[10] = false;
+                            break;
                         case (128):
                             Bits[12] = false; Bits[11] = true; Bits[10] = false;
                             break;
@@ -485,7 +488,7 @@ namespace GB_Memory
 
                     //ROM Startoffset
                     Byte StartOffsetByte = (Byte)(StartOffset / 32);
-                    StartOffset += ROMList[i].ROMSizeKByte;
+                    StartOffset += ((ROMList[i].ROMSizeKByte < 128) ? 128 : ROMList[i].ROMSizeKByte);
 
                     temp = new Byte[2];
                     Bits.CopyTo(temp, 0);
@@ -592,6 +595,9 @@ namespace GB_Memory
                 //ROM Size
                 switch (ROMToAdd.ROMSizeKByte)
                 {
+                    case (64):
+                        Bits[12] = false; Bits[11] = true; Bits[10] = false;
+                        break;
                     case (128):
                         Bits[12] = false; Bits[11] = true; Bits[10] = false;
                         break;
