@@ -768,7 +768,7 @@ namespace GB_Memory
 
             foreach (ROM R in ROMsToAdd)
             {
-                if (R.Title != "")
+                if (R.Title != "" && R.Title != null)
                 {
                     AddROMToInterface(R);
                 }
