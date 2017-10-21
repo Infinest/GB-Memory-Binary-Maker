@@ -56,7 +56,7 @@
             this.ROMListPanel.Name = "ROMListPanel";
             this.ROMListPanel.Size = new System.Drawing.Size(423, 393);
             this.ROMListPanel.TabIndex = 1;
-            this.ROMListPanel.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.panel1_ControlRemoved);
+            this.ROMListPanel.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.ROMListPanel_ControlRemoved);
             // 
             // SpaceLabel
             // 
@@ -88,7 +88,7 @@
             // 
             // MAPButton
             // 
-            this.MAPButton.Location = new System.Drawing.Point(12, 440);
+            this.MAPButton.Location = new System.Drawing.Point(12, 468);
             this.MAPButton.Name = "MAPButton";
             this.MAPButton.Size = new System.Drawing.Size(423, 23);
             this.MAPButton.TabIndex = 6;
@@ -98,7 +98,7 @@
             // 
             // ImportButton
             // 
-            this.ImportButton.Location = new System.Drawing.Point(12, 470);
+            this.ImportButton.Location = new System.Drawing.Point(12, 440);
             this.ImportButton.Name = "ImportButton";
             this.ImportButton.Size = new System.Drawing.Size(423, 23);
             this.ImportButton.TabIndex = 7;

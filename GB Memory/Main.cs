@@ -234,11 +234,11 @@ namespace GB_Memory
             else { SpaceLabel.ForeColor = Color.FromArgb(255, 255, 0, 0); }
         }
 
-        private void panel1_ControlRemoved(Object sender, ControlEventArgs e)
+        private void ROMListPanel_ControlRemoved(Object sender, ControlEventArgs e)
         {
             for (int i = 0; i < ((Panel)sender).Controls.Count; i++)
             {
-                ((Panel)sender).Controls[i].Location = new Point(0, i * 91 + (((Panel)sender).AutoScrollPosition.Y + 1));
+                ((Panel)sender).Controls[i].Location = new Point(1, i * 91 + (((Panel)sender).AutoScrollPosition.Y + 1));
             }
         }
 
