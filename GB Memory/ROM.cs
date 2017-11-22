@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GB_Memory
 {
-    class ROM
+    public class ROM
     {
         public String Title,ASCIITitle,File;
         public Byte CartridgeType, ROMSize, RAMSize;

@@ -14,6 +14,7 @@ namespace GB_Memory
 
     class TitleImage
     {
+
         public static Bitmap CreateTitleBitmap(string Input)
         {
             Bitmap Output = new Bitmap(96, 8);
@@ -58,19 +59,10 @@ namespace GB_Memory
                         }
                     }
                 }
-                String k = "";
-                for(int a = 0;a< Pixels.Count;a++)
-                {
-                    k = k + (Pixels[a] ? "1" : "0");
-                }
                 Byte[] tmp = new Byte[16];
                 Pixels.CopyTo(tmp, 0);
                 GB2bpp.AddRange(tmp);
             }
-            //using (FileStream Writer = new FileStream(Application.StartupPath + @"\Output.bin", FileMode.Create, FileAccess.ReadWrite))
-            //{
-            //    Writer.Write(GB2bpp.ToArray(), 0, GB2bpp.Count);
-            //}
             return GB2bpp.ToArray();
         }
 
@@ -304,11 +296,10 @@ namespace GB_Memory
                     return new Rectangle(112, 0, 7, 8);
                 case 'F':
                     return new Rectangle(120, 0, 7, 8);
-
                 case 'G':
                     return new Rectangle(0, 8, 7, 8);
                 case 'H':
-                    return new Rectangle(9, 8, 7, 8);
+                    return new Rectangle(8, 8, 7, 8);
                 case 'I':
                     return new Rectangle(16, 8, 7, 8);
                 case 'J':

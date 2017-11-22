@@ -50,6 +50,7 @@
             // 
             // ROMListPanel
             // 
+            this.ROMListPanel.AllowDrop = true;
             this.ROMListPanel.AutoScroll = true;
             this.ROMListPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.ROMListPanel.Location = new System.Drawing.Point(12, 41);
@@ -57,6 +58,8 @@
             this.ROMListPanel.Size = new System.Drawing.Size(423, 393);
             this.ROMListPanel.TabIndex = 1;
             this.ROMListPanel.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.ROMListPanel_ControlRemoved);
+            this.ROMListPanel.DragDrop += new System.Windows.Forms.DragEventHandler(this.FileDrop);
+            this.ROMListPanel.DragEnter += new System.Windows.Forms.DragEventHandler(this.FileEnter);
             // 
             // SpaceLabel
             // 
