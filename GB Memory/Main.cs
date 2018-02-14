@@ -108,7 +108,6 @@ namespace GB_Memory
                 {
                     if (R.Title == ((Button)s).Parent.Controls[0].Text && R.ASCIITitle == ((Button)s).Parent.Controls[1].Text)
                     {
-                        MessageBox.Show(R.File);
                         TitleEntry ROMEditTitle = new TitleEntry();
                         if (ROMEditTitle.ShowDialog() == DialogResult.OK)
                         {

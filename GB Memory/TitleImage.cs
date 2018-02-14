@@ -301,7 +301,7 @@ namespace GB_Memory
                 case 'H':
                     return new Rectangle(8, 8, 7, 8);
                 case 'I':
-                    return new Rectangle(16, 8, 7, 8);
+                    return new Rectangle(17, 8, 5, 8);
                 case 'J':
                     return new Rectangle(24, 8, 7, 8);
                 case 'K':
@@ -328,11 +328,10 @@ namespace GB_Memory
                     return new Rectangle(112, 8, 7, 8);
                 case 'V':
                     return new Rectangle(120, 8, 7, 8);
-
                 case 'W':
                     return new Rectangle(0, 16, 7, 8);
                 case 'X':
-                    return new Rectangle(9, 16, 7, 8);
+                    return new Rectangle(8, 16, 7, 8);
                 case 'Y':
                     return new Rectangle(16, 16, 7, 8);
                 case 'Z':
@@ -342,42 +341,42 @@ namespace GB_Memory
                 case 'b':
                     return new Rectangle(40, 16, 7, 8);
                 case 'c':
-                    return new Rectangle(48, 16, 7, 8);
+                    return new Rectangle(49, 16, 6, 8);
                 case 'd':
-                    return new Rectangle(56, 16, 7, 8);
+                    return new Rectangle(56, 16, 6, 8);
                 case 'e':
-                    return new Rectangle(64, 16, 7, 8);
+                    return new Rectangle(65, 16, 6, 8);
                 case 'f':
-                    return new Rectangle(72, 16, 7, 8);
+                    return new Rectangle(73, 16, 5, 8);
                 case 'g':
                     return new Rectangle(80, 16, 7, 8);
                 case 'h':
                     return new Rectangle(88, 16, 7, 8);
                 case 'i':
-                    return new Rectangle(96, 16, 7, 8);
+                    return new Rectangle(98, 16, 4, 8);
                 case 'j':
-                    return new Rectangle(104, 16, 7, 8);
+                    return new Rectangle(105, 16, 4, 8);
                 case 'k':
                     return new Rectangle(112, 16, 7, 8);
                 case 'l':
-                    return new Rectangle(120, 16, 7, 8);
+                    return new Rectangle(122, 16, 4, 8);
 
                 case 'm':
                     return new Rectangle(0, 24, 7, 8);
                 case 'n':
                     return new Rectangle(8, 24, 7, 8);
                 case 'o':
-                    return new Rectangle(16, 24, 7, 8);
+                    return new Rectangle(17, 24, 6, 8);
                 case 'p':
                     return new Rectangle(24, 24, 7, 8);
                 case 'q':
                     return new Rectangle(32, 24, 7, 8);
                 case 'r':
-                    return new Rectangle(40, 24, 7, 8);
+                    return new Rectangle(41, 24, 6, 8);
                 case 's':
-                    return new Rectangle(48, 24, 7, 8);
+                    return new Rectangle(49, 24, 6, 8);
                 case 't':
-                    return new Rectangle(56, 24, 7, 8);
+                    return new Rectangle(57, 24, 5, 8);
                 case 'u':
                     return new Rectangle(64, 24, 7, 8);
                 case 'v':
@@ -387,20 +386,20 @@ namespace GB_Memory
                 case 'x':
                     return new Rectangle(88, 24, 7, 8);
                 case 'y':
-                    return new Rectangle(96, 24, 7, 8);
+                    return new Rectangle(97, 24, 6, 8);
                 case 'z':
-                    return new Rectangle(104, 24, 7, 8);
+                    return new Rectangle(105, 24, 6, 8);
                 case '.':
                     return new Rectangle(112, 24, 7, 8);
                 case ',':
                     return new Rectangle(120, 24, 7, 8);
 
                 case '\'':
-                    return new Rectangle(0, 32, 7, 8);
+                    return new Rectangle(0, 32, 3, 8);
                 case '!':
-                    return new Rectangle(9, 32, 7, 8);
+                    return new Rectangle(8, 32, 4, 8);
                 case '?':
-                    return new Rectangle(16, 32, 7, 8);
+                    return new Rectangle(16, 32, 6, 8);
             }
             return new Rectangle(120, 32, 4,8);
         }
