@@ -13,3 +13,5 @@
 Please keep in mind that to generate a binary with the Menu, the program requires the 128kB menu binary in the program folder!
 
 ![N|Solid](https://i.imgur.com/f7v7qtc.png)
+___
+### To read/write from and to your GB Memory cartridge I highly recommend using Sanni's [Cartridge Reader Shield for Arduino Mega 2560](https://github.com/sanni/cartreader)
