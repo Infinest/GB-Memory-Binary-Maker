@@ -150,15 +150,15 @@ namespace GB_Memory
                 }
 
                 //SRAM Size
-                if (ROMToProcess.RAMSizeKByte == 0)
+                if (ROMToProcess.CartridgeType == 0x6)
+                {
+                    //MBC2+BATTERY
+                    Bits[9] = false; Bits[8] = false; Bits[7] = true;
+                }
+                else if (ROMToProcess.RAMSizeKByte == 0)
                 {
                     //No SRAM
                     Bits[9] = false; Bits[8] = false; Bits[7] = false;
-                }
-                else if (ROMToProcess.CartridgeType >= 0x5 && ROMToProcess.CartridgeType <= 0x6)
-                {
-                    //MBC2
-                    Bits[9] = false; Bits[8] = false; Bits[7] = true;
                 }
                 else if (ROMToProcess.RAMSizeKByte == 8)
                 {
@@ -295,15 +295,15 @@ namespace GB_Memory
                     }
 
                     //SRAM Size
-                    if (ROMList[i].RAMSizeKByte == 0)
+                    if (ROMList[i].CartridgeType == 0x6)
+                    {
+                        //MBC2+BATTERY
+                        Bits[9] = false; Bits[8] = false; Bits[7] = true;
+                    }
+                    else if (ROMList[i].RAMSizeKByte == 0)
                     {
                         //No SRAM
                         Bits[9] = false; Bits[8] = false; Bits[7] = false;
-                    }
-                    else if (ROMList[i].CartridgeType >= 0x5 && ROMList[i].CartridgeType <= 0x6)
-                    {
-                        //MBC2
-                        Bits[9] = false; Bits[8] = false; Bits[7] = true;
                     }
                     else if (ROMList[i].RAMSizeKByte == 8)
                     {
@@ -334,7 +334,7 @@ namespace GB_Memory
 
                     //RAM Offset
                     Mem.WriteByte((Byte)(RAMStartOffset / 2));
-                    RAMStartOffset += ROMList[i].RAMSizeKByte;
+                    RAMStartOffset += ((ROMList[i].CartridgeType == 0x6 || ROMList[i].RAMSizeKByte < 8) ? 8 : ROMList[i].RAMSizeKByte);
                 }
 
                 while (Mem.Position < 0x6E)
