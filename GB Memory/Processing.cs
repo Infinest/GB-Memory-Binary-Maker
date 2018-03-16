@@ -402,7 +402,7 @@ namespace GB_Memory
                     Mem.Write(temp, 0, temp.Length);
 
                     //Title Bitmap (128x8 pixels, 16 tiles at 2bpp)
-                    temp = TitleImage.GB(TitleImage.CreateTitleBitmap(ROMList[i].Title));
+                    temp = TitleImage.GB(TitleImage.CreateTitleBitmap(ROMList[i]));
                     Mem.Write(temp, 0, temp.Length);
 
                     //Zerofill
