@@ -11,6 +11,7 @@ namespace GB_Memory
         public String Title,ASCIITitle,File;
         public Byte CartridgeType, ROMSize, RAMSize;
         public bool padded,CGB,embedded = false;
+        public bool UseTrueTypeFontForTitleImage = false;
         public uint ROMPos = 0;
 
         public int ROMSizeKByte
