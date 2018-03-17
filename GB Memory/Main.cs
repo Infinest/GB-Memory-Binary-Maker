@@ -15,6 +15,7 @@ namespace GB_Memory
         const int ROMSpace = 896;
         int FreeROMSpace = ROMSpace;
         List<ROM> ROMList = new List<ROM>();
+        TickerImage Ticker = null;
         public Main()
         {
             InitializeComponent();
@@ -281,7 +282,7 @@ namespace GB_Memory
                 SavePath = ToSave.FileName;
             }
 
-            Processing.CreateMenuBinary(ROMList, ref MenuBuffer);
+            Processing.CreateMenuBinary(ROMList, Ticker, ref MenuBuffer);
 
             Byte[] MAPBytes = Processing.GenerateMAPForMenuBinary(ROMList);
 
@@ -432,6 +433,15 @@ namespace GB_Memory
             else
             {
                 e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void EditTickerButton_Click(object sender, EventArgs e)
+        {
+            TickerEditor editor = new TickerEditor();
+            if (editor.ShowDialog() == DialogResult.OK)
+            {
+                this.Ticker = editor.TickerImage;
             }
         }
     }

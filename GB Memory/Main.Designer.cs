@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.AddButton = new System.Windows.Forms.Button();
             this.ROMListPanel = new System.Windows.Forms.Panel();
+            this.EditTickerButton = new System.Windows.Forms.Button();
             this.SpaceLabel = new System.Windows.Forms.Label();
             this.CreateBinariesButton = new System.Windows.Forms.Button();
             this.MenuSpace = new System.Windows.Forms.Label();
@@ -53,13 +54,23 @@
             this.ROMListPanel.AllowDrop = true;
             this.ROMListPanel.AutoScroll = true;
             this.ROMListPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.ROMListPanel.Location = new System.Drawing.Point(12, 41);
+            this.ROMListPanel.Location = new System.Drawing.Point(12, 77);
             this.ROMListPanel.Name = "ROMListPanel";
             this.ROMListPanel.Size = new System.Drawing.Size(423, 393);
             this.ROMListPanel.TabIndex = 1;
             this.ROMListPanel.ControlRemoved += new System.Windows.Forms.ControlEventHandler(this.ROMListPanel_ControlRemoved);
             this.ROMListPanel.DragDrop += new System.Windows.Forms.DragEventHandler(this.FileDrop);
             this.ROMListPanel.DragEnter += new System.Windows.Forms.DragEventHandler(this.FileEnter);
+            // 
+            // EditTickerButton
+            // 
+            this.EditTickerButton.Location = new System.Drawing.Point(12, 42);
+            this.EditTickerButton.Name = "EditTickerButton";
+            this.EditTickerButton.Size = new System.Drawing.Size(75, 23);
+            this.EditTickerButton.TabIndex = 8;
+            this.EditTickerButton.Text = "Edit Ticker";
+            this.EditTickerButton.UseVisualStyleBackColor = true;
+            this.EditTickerButton.Click += new System.EventHandler(this.EditTickerButton_Click);
             // 
             // SpaceLabel
             // 
@@ -91,7 +102,7 @@
             // 
             // MAPButton
             // 
-            this.MAPButton.Location = new System.Drawing.Point(12, 468);
+            this.MAPButton.Location = new System.Drawing.Point(12, 508);
             this.MAPButton.Name = "MAPButton";
             this.MAPButton.Size = new System.Drawing.Size(423, 23);
             this.MAPButton.TabIndex = 6;
@@ -101,7 +112,7 @@
             // 
             // ImportButton
             // 
-            this.ImportButton.Location = new System.Drawing.Point(12, 440);
+            this.ImportButton.Location = new System.Drawing.Point(12, 480);
             this.ImportButton.Name = "ImportButton";
             this.ImportButton.Size = new System.Drawing.Size(423, 23);
             this.ImportButton.TabIndex = 7;
@@ -113,7 +124,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(447, 497);
+            this.ClientSize = new System.Drawing.Size(447, 537);
+            this.Controls.Add(this.EditTickerButton);
             this.Controls.Add(this.ImportButton);
             this.Controls.Add(this.MAPButton);
             this.Controls.Add(this.MenuSpace);
@@ -141,6 +153,7 @@
         private System.Windows.Forms.Label MenuSpace;
         private System.Windows.Forms.Button MAPButton;
         private System.Windows.Forms.Button ImportButton;
+        private System.Windows.Forms.Button EditTickerButton;
     }
 }
 

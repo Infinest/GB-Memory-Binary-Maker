@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -349,7 +350,7 @@ namespace GB_Memory
             return MAPBytes;
         }
 
-        public static void CreateMenuBinary(List<ROM> ROMList, ref Byte[] Template)
+        public static void CreateMenuBinary(List<ROM> ROMList, TickerImage Ticker, ref Byte[] Template)
         {
             using (MemoryStream Mem = new MemoryStream(Template))
             {
@@ -431,6 +432,14 @@ namespace GB_Memory
                     {
                         Mem.WriteByte(0xFF);
                     }
+                }
+
+                if (Ticker != null)
+                {
+                    // Write News Ticker Image
+                    Mem.Position = 0x18040;  // bank 6:4000h + 64bytes
+                    Byte[] ticker = Ticker.GB();
+                    Mem.Write(ticker, 0, ticker.Length);  // 8128bytes
                 }
 
                 //Write Game ROMs to Binary
