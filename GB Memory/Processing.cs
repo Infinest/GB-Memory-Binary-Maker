@@ -406,7 +406,7 @@ namespace GB_Memory
                     Mem.Write(temp, 0, temp.Length);
 
                     //Zerofill
-                    for (int b = 0; b < 0xC0; b++)
+                    for (int b = 0; b < 0x80; b++)
                     {
                         Mem.WriteByte(0x0);
                     }
