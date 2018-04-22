@@ -17,7 +17,7 @@ namespace GB_Memory
 
         public static Bitmap CreateTitleBitmap(string Input)
         {
-            Bitmap Output = new Bitmap(96, 8);
+            Bitmap Output = new Bitmap(128, 8);
             using (Graphics g = Graphics.FromImage(Output))
             {
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
@@ -42,7 +42,7 @@ namespace GB_Memory
         {
             BitArray Pixels;
             List<Byte> GB2bpp = new List<byte>();
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < 16; i++)
             {
                 Pixels = new BitArray(128);
                 Bitmap Tile = Input.Clone(new Rectangle(i * 8, 0, 8, 8), PixelFormat.Format8bppIndexed);
