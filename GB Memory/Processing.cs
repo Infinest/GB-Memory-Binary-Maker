@@ -165,9 +165,9 @@ namespace GB_Memory
                     //8KB
                     Bits[9] = false; Bits[8] = true; Bits[7] = false;
                 }
-                else if (ROMToProcess.RAMSizeKByte == 32)
+                else if (ROMToProcess.RAMSizeKByte >= 32)
                 {
-                    //32KB
+                    //32KB or bigger (but we can use <= 4 blocks (32KB) of SRAM per one ROM)
                     Bits[9] = false; Bits[8] = true; Bits[7] = true;
                 }
                 else
@@ -310,9 +310,9 @@ namespace GB_Memory
                         //8KB
                         Bits[9] = false; Bits[8] = true; Bits[7] = false;
                     }
-                    else if (ROMList[i].RAMSizeKByte == 32)
+                    else if (ROMList[i].RAMSizeKByte >= 32)
                     {
-                        //32KB
+                        //32KB or bigger (but we can use <= 4 blocks (32KB) of SRAM per one ROM)
                         Bits[9] = false; Bits[8] = true; Bits[7] = true;
                     }
                     else

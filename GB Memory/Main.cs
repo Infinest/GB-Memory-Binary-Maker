@@ -165,6 +165,8 @@ namespace GB_Memory
             ROMListPanel.Controls.Add(ROMPanel);
             ROMList.Add(ROMToAdd);
             updateROMSpace();
+
+            ShowRAMSizeOverflowWarning(ROMToAdd);
         }
 
         private void AddButtonClick(object sender, EventArgs e)
@@ -314,6 +316,7 @@ namespace GB_Memory
                             ROMToProcess = Processing.ParseROM(Mem, GenerateFor.FileName);
                         }
                     }
+                    ShowRAMSizeOverflowWarning(ROMToProcess);
 
                     Byte[] MAPBytes = Processing.GenerateStandaloneMAPForROM(ROMToProcess);
 
@@ -428,6 +431,14 @@ namespace GB_Memory
             else
             {
                 e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void ShowRAMSizeOverflowWarning(ROM R)
+        {
+            if (R.IsRAMSizeOverflow)
+            {
+                MessageBox.Show("GB Memory doesn't support ROMs with more than 32kBytes of SRAM, your ROM will not work correctly.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
     }

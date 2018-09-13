@@ -27,6 +27,13 @@ namespace GB_Memory
                 return (2 * (int)Math.Pow(4,RAMSize-1));
             }
         }
+        public bool IsRAMSizeOverflow
+        {
+            get
+            {
+                return (RAMSizeKByte > 32);
+            }
+        }
         public String CartridgeTypeString
         {
             get
