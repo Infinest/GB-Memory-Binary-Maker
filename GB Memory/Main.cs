@@ -29,7 +29,7 @@ namespace GB_Memory
             Panel ROMPanel = new Panel();
             ROMPanel.Width = ROMListPanel.Width - 22;
             ROMPanel.Height = 90;
-            ROMPanel.Location = new Point(1, 1 + ROMListPanel.Controls.Count * 91);
+            ROMPanel.Location = new Point(1, 1 + ROMListPanel.Controls.Count * 91 + ROMListPanel.AutoScrollPosition.Y);
             ROMPanel.BorderStyle = BorderStyle.FixedSingle;
 
             //Invisible that contains the entered title in String format for later
