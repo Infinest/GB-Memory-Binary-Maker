@@ -29,7 +29,7 @@ namespace GB_Memory
             Panel ROMPanel = new Panel();
             ROMPanel.Width = ROMListPanel.Width - 22;
             ROMPanel.Height = 90;
-            ROMPanel.Location = new Point(1, 1 + ROMListPanel.Controls.Count * 91 + ROMListPanel.AutoScrollPosition.Y);
+            ROMPanel.Location = new Point(1, 1 + ROMListPanel.Controls.Count * 91);
             ROMPanel.BorderStyle = BorderStyle.FixedSingle;
 
             //Invisible that contains the entered title in String format for later
@@ -63,7 +63,7 @@ namespace GB_Memory
             ROMPanel.Controls.Add(TitleIMDisplay);
 
             PictureBox TitleIMG = new PictureBox();
-            TitleIMG.Image = TitleImage.CreateTitleBitmap(ROMToAdd.Title);
+            TitleIMG.Image = TitleImage.CreateTitleBitmap(ROMToAdd);
             TitleIMG.SizeMode = PictureBoxSizeMode.AutoSize;
             TitleIMG.Location = new Point(35, 21);
             TitleIMG.BorderStyle = BorderStyle.FixedSingle;
@@ -112,7 +112,8 @@ namespace GB_Memory
                         if (ROMEditTitle.ShowDialog() == DialogResult.OK)
                         {
                             R.Title = ROMEditTitle.Title;
-                            ((PictureBox)(((Button)s).Parent.Controls[5])).Image = TitleImage.CreateTitleBitmap(R.Title);
+                            R.UseTrueTypeFontForTitleImage = ROMEditTitle.UseTrueTypeFont;
+                            ((PictureBox)(((Button)s).Parent.Controls[5])).Image = TitleImage.CreateTitleBitmap(R);
                             (((Button)s).Parent.Controls[0]).Text = R.Title;
                         }
                         break;
@@ -200,6 +201,7 @@ namespace GB_Memory
                         if (ROMTitle.ShowDialog() == DialogResult.OK)
                         {
                             R.Title = ROMTitle.Title;
+                            R.UseTrueTypeFontForTitleImage = ROMTitle.UseTrueTypeFont;
                         }
                         else return;
                         AddROMToInterface(R);
@@ -358,6 +360,7 @@ namespace GB_Memory
                         if (ROMTitle.ShowDialog() == DialogResult.OK)
                         {
                             R.Title = ROMTitle.Title;
+                            R.UseTrueTypeFontForTitleImage = ROMTitle.UseTrueTypeFont;
                         }
                         else return;
                         AddROMToInterface(R);
@@ -407,6 +410,7 @@ namespace GB_Memory
                 if (ROMTitle.ShowDialog() == DialogResult.OK)
                 {
                     R.Title = ROMTitle.Title;
+                    R.UseTrueTypeFontForTitleImage = ROMTitle.UseTrueTypeFont;
                 }
                 else return;
                 AddROMToInterface(R);
