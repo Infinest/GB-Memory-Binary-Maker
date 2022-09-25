@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace GB_Memory
     class TitleImage
     {
 
-        public static Bitmap CreateTitleBitmap(string Input)
+        public static Bitmap CreateTitleBitmapWithOriginalFont(string Input)
         {
             Bitmap Output = new Bitmap(96, 8);
             using (Graphics g = Graphics.FromImage(Output))
@@ -38,6 +39,40 @@ namespace GB_Memory
             }
             return Output.Clone(new Rectangle(0, 0, Output.Width, Output.Height), PixelFormat.Format8bppIndexed);
         }
+
+        public static Bitmap CreateTitleBitmapWithTrueTypeFont(string Input)
+        {
+            Bitmap Output = new Bitmap(96, 8);
+            using (Graphics g = Graphics.FromImage(Output))
+            {
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+                g.Clear(Color.Black);
+                if (!File.Exists(Application.StartupPath + @"\fonts\title\misaki_gothic.ttf"))
+                {
+                    MessageBox.Show("Font file is missing!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return Output;
+                }
+                PrivateFontCollection pfc = new PrivateFontCollection();
+                pfc.AddFontFile(Application.StartupPath + @"\fonts\title\misaki_gothic.ttf");
+                Font f = new Font(pfc.Families[0], 8, FontStyle.Regular, GraphicsUnit.Pixel);
+                g.TextRenderingHint = TextRenderingHint.SingleBitPerPixel;
+                g.DrawString(Input, f, Brushes.White, new PointF(0, 1));
+                f.Dispose();
+                pfc.Dispose();
+            }
+            return Output.Clone(new Rectangle(0, 0, Output.Width, Output.Height), PixelFormat.Format8bppIndexed);
+        }
+
+        public static Bitmap CreateTitleBitmap(ROM R)
+        {
+            if (R.UseTrueTypeFontForTitleImage)
+            {
+                return CreateTitleBitmapWithTrueTypeFont(R.Title);
+            }
+
+            return CreateTitleBitmapWithOriginalFont(R.Title);
+        }
+
         public static Byte[] GB(Bitmap Input)
         {
             BitArray Pixels;
