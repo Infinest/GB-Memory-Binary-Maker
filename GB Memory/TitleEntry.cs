@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,7 +18,19 @@ namespace GB_Memory
         {
             get
             {
+                if (checkBox2.Checked)
+                {
+                    return Regex.Replace(textBox1.Text, "[!-~]", p => ((char)(p.Value[0] - '!' + '\uff01')).ToString()); // '\uff01' == '！'
+                }
+
                 return textBox1.Text;
+            }
+        }
+        public bool UseTrueTypeFont
+        {
+            get
+            {
+                return checkBox1.Checked;
             }
         }
         public TitleEntry(string title = "")
@@ -37,6 +50,11 @@ namespace GB_Memory
                 DisplayASCIITitle.Location = new Point(5, 5);
                 this.Controls.Add(DisplayASCIITitle);
             }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBox2.Enabled = checkBox1.Checked;
         }
 
         private void button1_Click(object sender, EventArgs e)

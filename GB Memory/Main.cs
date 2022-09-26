@@ -15,6 +15,7 @@ namespace GB_Memory
         const int ROMSpace = 896;
         int FreeROMSpace = ROMSpace;
         List<ROM> ROMList = new List<ROM>();
+        TickerImage Ticker = null;
         public Main()
         {
             InitializeComponent();
@@ -63,7 +64,7 @@ namespace GB_Memory
             ROMPanel.Controls.Add(TitleIMDisplay);
 
             PictureBox TitleIMG = new PictureBox();
-            TitleIMG.Image = TitleImage.CreateTitleBitmap(ROMToAdd.Title);
+            TitleIMG.Image = TitleImage.CreateTitleBitmap(ROMToAdd);
             TitleIMG.SizeMode = PictureBoxSizeMode.AutoSize;
             TitleIMG.Location = new Point(35, 21);
             TitleIMG.BorderStyle = BorderStyle.FixedSingle;
@@ -112,7 +113,8 @@ namespace GB_Memory
                         if (ROMEditTitle.ShowDialog() == DialogResult.OK)
                         {
                             R.Title = ROMEditTitle.Title;
-                            ((PictureBox)(((Button)s).Parent.Controls[5])).Image = TitleImage.CreateTitleBitmap(R.Title);
+                            R.UseTrueTypeFontForTitleImage = ROMEditTitle.UseTrueTypeFont;
+                            ((PictureBox)(((Button)s).Parent.Controls[5])).Image = TitleImage.CreateTitleBitmap(R);
                             (((Button)s).Parent.Controls[0]).Text = R.Title;
                         }
                         break;
@@ -200,6 +202,7 @@ namespace GB_Memory
                         if (ROMTitle.ShowDialog() == DialogResult.OK)
                         {
                             R.Title = ROMTitle.Title;
+                            R.UseTrueTypeFontForTitleImage = ROMTitle.UseTrueTypeFont;
                         }
                         else return;
                         AddROMToInterface(R);
@@ -281,7 +284,7 @@ namespace GB_Memory
                 SavePath = ToSave.FileName;
             }
 
-            Processing.CreateMenuBinary(ROMList, ref MenuBuffer);
+            Processing.CreateMenuBinary(ROMList, Ticker, ref MenuBuffer);
 
             Byte[] MAPBytes = Processing.GenerateMAPForMenuBinary(ROMList);
 
@@ -358,6 +361,7 @@ namespace GB_Memory
                         if (ROMTitle.ShowDialog() == DialogResult.OK)
                         {
                             R.Title = ROMTitle.Title;
+                            R.UseTrueTypeFontForTitleImage = ROMTitle.UseTrueTypeFont;
                         }
                         else return;
                         AddROMToInterface(R);
@@ -407,6 +411,7 @@ namespace GB_Memory
                 if (ROMTitle.ShowDialog() == DialogResult.OK)
                 {
                     R.Title = ROMTitle.Title;
+                    R.UseTrueTypeFontForTitleImage = ROMTitle.UseTrueTypeFont;
                 }
                 else return;
                 AddROMToInterface(R);
@@ -439,6 +444,12 @@ namespace GB_Memory
             if (R.IsRAMSizeOverflow)
             {
                 MessageBox.Show("GB Memory doesn't support ROMs with more than 32kBytes of SRAM, your ROM will not work correctly.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        private void EditTickerButton_Click(object sender, EventArgs e)
+        {
+            TickerEditor editor = new TickerEditor();
+            if (editor.ShowDialog() == DialogResult.OK)
+            {
+                this.Ticker = editor.TickerImage;
             }
         }
     }
